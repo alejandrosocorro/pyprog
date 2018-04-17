@@ -1,4 +1,6 @@
- Python programs to practice or demonstrate skills.
+# Pytudes
+
+Python programs to practice or demonstrate skills.
 
 This project contains Python programs for perfecting programming skills.
 
