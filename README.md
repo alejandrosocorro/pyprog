@@ -1,4 +1,4 @@
-# Pytudes
+# Pyprog
 
 Python programs to practice or demonstrate skills.
 
