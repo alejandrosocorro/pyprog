@@ -125,8 +125,6 @@ def search(values):
         sudoku_copy = values.copy()
         sudoku_copy[box] = val
         attempt = search(sudoku_copy)
-        if type(dict):
-            display(attempt)
         if attempt:
             return attempt
 
