@@ -229,6 +229,6 @@ hard1  = '.....6....59.....82....8....45........3........6..3.54...325..6.......
     
 if __name__ == '__main__':
     test()
-    solve_all(open("sudoku-easy50.txt"), "easy")
-    solve_all(open("sudoku-top95.txt"), "hard")
-    solve_all(open("sudoku-hardest.txt"), "hardest")
+    solve_all(open("../data/sudoku-easy50.txt"), "easy")
+    solve_all(open("../data/sudoku-top95.txt"), "hard")
+    solve_all(open("../data/sudoku-hardest.txt"), "hardest")
