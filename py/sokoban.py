@@ -13,10 +13,32 @@ import ipdb
 import textwrap
 
 
+def transform_grid(grid):
+    new_grid = []
+    for row in grid:
+        line = row.replace("0", " ")
+        line = line.replace("1", "X")
+        line = line.replace("2", ".")
+        line = line.replace("3", "*")
+        line = line.replace("4", "@")
+        line = line.replace("5", "&")
+        line = line.replace("6", "$")
+        new_grid.append(line)
+    return new_grid
+
+
 def find_locations(grid):
-    box, hole, person = "*", ".", "@"
+    box, hole, person, wall, box_on_whole, person_on_whole = (
+        "*",
+        ".",
+        "@",
+        "X",
+        "&",
+        "$",
+    )
     boxes = []
     holes = []
+    walls = []
     player = ()
     for i, row in enumerate(grid):
         for j, column in enumerate(row):
@@ -26,11 +48,17 @@ def find_locations(grid):
                 holes.append((i, j))
             elif column == person:
                 player = (i, j)
-    return boxes, holes, player
+            elif column == wall:
+                walls.append((i, j))
+            elif column == box_on_whole:
+                boxes.append((i, j))
+            elif column == person_on_whole:
+                player = (i, j)
+    return boxes, holes, player, walls
 
 
-def choose_route(grid):
-    boxes, holes, player = find_locations(grid)
+def choose_box_to_push(grid):
+    boxes, holes, player, walls = find_locations(grid)
     paths = []
     for box in boxes:
         paths.append(bfs(grid, box, player))
@@ -43,31 +71,32 @@ def get_grid_X_and_Y(grid):
     return width, height
 
 
-def find_neighbors(cell, grid):
-    width, height = get_grid_X_and_Y(grid)
-    neighbors = lambda x, y: [
-        (x2, y2)
-        for x2 in range(x - 1, x + 2)
-        for y2 in range(y - 1, y + 2)
-        if (
-            -1 < x <= width
-            and -1 < y <= height
-            and (x != x2 or y != y2)
-            and (0 <= x2 <= width)
-            and (0 <= y2 <= height)
-        )
-    ]
-    return filter_neighbors(neighbors(cell[0], cell[1]), grid)
+def move_player_trough_route(player, route, grid):
+    x, y = route[0]
+    neighbors = find_neighbors(x, y)
+    pos = [i for i in neighbors if i in route][0]
+    temp = list(grid[pos[0]])
+    temp[pos[1]] = "@"
+    grid[pos[0]] = "".join(temp)
+
+    temp = list(grid[player[0]])
+    replace_char = " "
+    if player[1] == "$":
+        replace_char = "."
+    temp[player[1]] = replace_char
+    grid[player[0]] = "".join(temp)
+    return grid
 
 
-def filter_neighbors(neighbors, grid):
-    return list(filter(lambda cell: grid[cell[0]][cell[1]] == "X", neighbors))
+def find_neighbors(x, y):
+    return ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
 
 
 def bfs(grid, start, goal):
     width, height = get_grid_X_and_Y(grid)
     wall = "X"
     box = "*"
+    box_on_whole = "&"
     queue = collections.deque([[start]])
     seen = set([start])
     while queue:
@@ -76,12 +105,13 @@ def bfs(grid, start, goal):
         if (x, y) == goal:
             return path
 
-        for row, col in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+        for row, col in find_neighbors(x, y):
             if (
                 0 <= col < width
                 and 0 <= row < height
                 and grid[row][col] != wall
                 and grid[row][col] != box
+                and grid[row][col] != box_on_whole
                 and (row, col) not in seen
             ):
                 queue.append(path + [(row, col)])
@@ -89,7 +119,7 @@ def bfs(grid, start, goal):
 
 
 def read_sokobans(filename):
-    with open(filename, "r"):
+    with open(filename, "r") as f:
         lines = f.readlines()
 
     all_grids = []
@@ -99,31 +129,19 @@ def read_sokobans(filename):
             height = int(line[0:2])
             width = int(line[2:4])
             maze = textwrap.wrap(line[4:], width)
-            all_grids.append(maze)
-
+            all_grids.append(transform_grid(maze))
     return all_grids
 
 
-def parse_sokobans(filename):
-    with open(filename, "r") as f:
-        lines = f.readlines()
+def display_sokoban(grid):
+    for row in grid:
+        print(row)
 
-    start = 0
-    line_count = 0
-    all_grids = []
-    while line_count < len(lines):
-        maze_grid = []
-        maze_number = lines[start + 1]
-        size_x = int(lines[start + 2].split(":")[1].strip())
-        size_y = int(lines[start + 3].split(":")[1].strip())
-        for i, line in enumerate(lines[start + 5 : start + 5 + size_y]):
-            while len(line) < size_x:
-                line += " "
-            maze_grid.append(line.replace("\n", ""))
-        all_grids.append(maze_grid)
-        start += size_y + 6
-        line_count += start
-    return all_grids
+
+def reduce_sokoban(grid):
+    stalled = False
+    while not stalled:
+
 
 
 def reduce_puzzle(grid):
@@ -200,4 +218,4 @@ def solved(grid):
 
 
 if __name__ == "__main__":
-    solve_all(parse_sokobans("levels.txt"))
+    solve_all(parse_sokobans("sokoban_evels.txt"))
