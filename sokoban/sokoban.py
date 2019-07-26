@@ -57,6 +57,15 @@ def find_locations(grid):
     return boxes, holes, player, walls
 
 
+def push_box(start, end, grid):
+    """
+    * Check if the player can move the box
+    * Return True if possible and update the grid    
+    * Return False if not and return grid
+    """
+    pass
+
+
 def choose_box_to_push(grid):
     boxes, holes, player, walls = find_locations(grid)
     paths = []
@@ -136,39 +145,6 @@ def read_sokobans(filename):
 def display_sokoban(grid):
     for row in grid:
         print(row)
-
-
-def reduce_sokoban(grid):
-    stalled = False
-    while not stalled:
-
-
-
-def reduce_puzzle(grid):
-    stalled = False
-    while not stalled:
-        # Check how many boxes have a determined value
-        solved_values_before = len(
-            [box for box in values.keys() if len(values[box]) == 1]
-        )
-
-        # Eliminate Strategy
-        values = eliminate(values)
-        # Only Choice Strategy
-        values = only_choice(values)
-
-        # Check how many boxes have a determined value, to compare
-        solved_values_after = len(
-            [box for box in values.keys() if len(values[box]) == 1]
-        )
-
-        # If no new values were added, stop the loop.
-        stalled = solved_values_before == solved_values_after
-
-        # Sanity check, return False if there is a box with zero available values.
-        if len([box for box in values.keys() if len(values[box]) == 0]):
-            return False
-    return values
 
 
 def search(grid):
