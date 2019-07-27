@@ -60,10 +60,11 @@ def find_locations(grid):
 def push_box(start, end, grid):
     """
     * Check if the player can move the box
-    * Return True if possible and update the grid    
+    * Return True if possible and update the grid
     * Return False if not and return grid
     """
-    pass
+    x, y = start
+    neighbors = find_neighbors(x, y)
 
 
 def choose_box_to_push(grid):
@@ -72,6 +73,23 @@ def choose_box_to_push(grid):
     for box in boxes:
         paths.append(bfs(grid, box, player))
     return min(paths)
+
+
+def find_nearest_hole(start, grid):
+    _, holes, _, _ = find_locations(grid)
+    paths = []
+    for hole in holes:
+        paths.append(bfs(grid, start, hole))
+    return min(paths)
+
+
+def can_push(cell):
+    pass
+
+
+def can_move(cell):
+    x, y = cell
+    return True if grid[x][y] in (" ", ".") else False
 
 
 def get_grid_X_and_Y(grid):
