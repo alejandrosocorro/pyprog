@@ -1,5 +1,5 @@
 def fib(n: int) -> int:
-    if n < 2:   # base case
+    if n < 2:  # base case
         return n
     return fib(n - 2) + fib(n - 1)
 

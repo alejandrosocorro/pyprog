@@ -12,7 +12,7 @@ def fib(n: int) -> int:
     of the function it is decorating should be cached.
     Setting it to None indicates that there is no limit.
     """
-    if n < 2:   # base case
+    if n < 2:  # base case
         return n
     return fib(n - 2) + fib(n - 1)  # recursive case
 
