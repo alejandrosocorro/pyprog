@@ -1,5 +1,4 @@
 import time
-import textwrap
 from array import array
 from collections import deque
 
@@ -31,7 +30,8 @@ class Reader:
                 line = line.split(",")[1].strip()
                 height = int(line[0:2])
                 width = int(line[2:4])
-                maze = textwrap.wrap(line[4:], width)
+                line = line[4:]
+                maze = [line[i:i+width] for i in range(0, len(line), width)]
                 all_grids.append(self.transform_grid(maze))
         return all_grids
 
