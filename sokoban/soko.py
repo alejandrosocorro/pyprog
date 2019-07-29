@@ -37,23 +37,22 @@ class Reader:
 
 
 class Sokoban:
-    data = []
-    nrows = 0
-    px = py = 0
-    sdata = ""
-    ddata = ""
-    directions = (
-        (0, -1, "u", "U"),
-        (1, 0, "r", "R"),
-        (0, 1, "d", "D"),
-        (-1, 0, "l", "L"),
-    )
-    maps = {" ": " ", ".": ".", "@": " ", "#": "#", "$": " ", "*": ".", "+": " "}
-    mapd = {" ": " ", ".": " ", "@": "@", "#": " ", "$": "*", "*": "*", "+": "@"}
 
     def __init__(self, board):
-        self.data = filter(None, board)
+        self.data = board
         self.nrows = max(len(r) for r in self.data)
+        self.px = 0
+        self.py = 0
+        self.sdata = ""
+        self.ddata = ""
+        self.directions = (
+            (0, -1, "u", "U"),
+            (1, 0, "r", "R"),
+            (0, 1, "d", "D"),
+            (-1, 0, "l", "L"),
+        )
+        self.maps = {' ':' ', '.': '.', '@':' ', '#':'#', '$':' ', '*': '.'}
+        self.mapd = {' ':' ', '.': ' ', '@':'@', '#':' ', '$':'*', '*': '*'}
 
         for r, row in enumerate(self.data):
             for c, ch in enumerate(row):
@@ -61,6 +60,7 @@ class Sokoban:
                 self.ddata += self.mapd[ch]
                 if ch == "@":
                     self.px, self.py = c, r
+
 
     def solved_grid(self, m1, m2):
         """ Print to stdout solved Sokoban board"""
@@ -85,11 +85,13 @@ class Sokoban:
         ):
             return None
 
-        row = array("c", data)
-        row[y * self.nrows + x] = " "
-        row[(y + dy) * self.nrows + x + dx] = "@"
-        row[(y + 2 * dy) * self.nrows + x + 2 * dx] = "*"
-        return row.tostring()
+        row = array("b")
+        row.fromstring(data)
+        #row = array("c", data)
+        row[y * self.nrows + x] = " ".encode()
+        row[(y + dy) * self.nrows + x + dx] = "@",encode()
+        row[(y + 2 * dy) * self.nrows + x + 2 * dx] = "*".encode()
+        return row.tobytes().decode()
 
     def is_solved(self, temp):
         """ Helper function to check if the Sokoban is solved """
@@ -109,7 +111,6 @@ class Sokoban:
             for di in self.directions:
                 temp = current
                 dx, dy = di[0], di[1]
-
                 if temp[(y + dy) * self.nrows + x + dx] == "*":
                     temp = self.push(x, y, dx, dy, temp)
                     if temp and temp not in visited:
@@ -128,10 +129,12 @@ class Sokoban:
                     ):
                         continue
 
-                    row = array("c", temp)
-                    row[y * self.nrows + x] = " "
-                    row[(y + dy) * self.nrows + x + dx] = "@"
-                    temp = row.tostring()
+                    row = array("b")
+                    row.fromstring(temp)
+                    #row = array("c", temp)
+                    row[y * self.nrows + x] = " ".encode()
+                    row[(y + dy) * self.nrows + x + dx] = "@".encode()
+                    temp = row.tobytes().decode()
 
                     if temp not in visited:
 
@@ -147,11 +150,13 @@ class Sokoban:
 
 def solve_all(grids):
     """ Try to solve a sequence of sokoban grids """
-    sokobans = [Sokoban(grid) for grid in grids[0]]
-    times, results = zip(*[time_solve(sokoban) for sokoban in sokobans])
-    if len(results):
-        print(results[0])
-        print("# of Steps: {}".format(len(results[0])))
+    level = grids[1]
+    print(time_solve(Sokoban(level)))
+    #sokobans = [Sokoban(grid) for grid in grids[0]]
+    #times, results = zip(*[time_solve(sokoban) for sokoban in sokobans])
+    #if len(results):
+    #    print(results[0])
+    #    print("# of Steps: {}".format(len(results[0])))
 
 
 def time_solve(sokoban):
