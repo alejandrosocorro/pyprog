@@ -172,7 +172,7 @@ def solve_all(grids):
             print(f"# of Steps: {len(result[1])}")
             print(f"Time: {time}\n\n")
         else:
-            print("Couldn't solve Sokoban #{i}...")
+            print(f"Couldn't solve Sokoban #{i}...")
 
 
 def time_solve(sokoban):
