@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-ipython = "==7.6.1"
+ipython = "==7.16.3"
 appdirs = "==1.4.3"
 appnope = "==0.1.0"
 attrs = "==19.1.0"
